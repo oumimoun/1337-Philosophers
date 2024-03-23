@@ -6,7 +6,7 @@
 /*   By: oumimoun <oumimoun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 19:33:24 by oumimoun          #+#    #+#             */
-/*   Updated: 2024/03/20 23:10:14 by oumimoun         ###   ########.fr       */
+/*   Updated: 2024/03/23 01:56:10 by oumimoun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,6 @@
 #include <time.h>
 #include <sys/time.h>
 
-#define MAX_PHILOSOPHERS 10
-
-pthread_mutex_t forks[MAX_PHILOSOPHERS];
 
 typedef struct s_data
 {
@@ -35,7 +32,6 @@ typedef struct s_data
     int nb_must_eat;
     int times_eaten;
     pthread_mutex_t *forks;
-    // long start_time;
 
 } t_philo;
 
