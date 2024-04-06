@@ -1,6 +1,6 @@
 HEADER = philo.h
 CC = cc
-CFLAGS = -Wall -Werror -Wextra -g
+CFLAGS = -Wall -Werror -Wextra
 NAME = philo
 SRC = philo.c philo_utils.c
 
