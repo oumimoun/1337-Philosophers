@@ -12,6 +12,20 @@
 
 #include "philo.h"
 
+void ft_putstr_fd(char *s, int fd)
+{
+   int i;
+
+   if (!s || fd < 0)
+      return;
+   i = 0;
+   while (s[i])
+   {
+      write(fd, &s[i], 1);
+      i++;
+   }
+}
+
 int ft_check_args(int ac, char **av)
 {
    int i;
@@ -19,7 +33,7 @@ int ft_check_args(int ac, char **av)
 
    if (ac < 5 || ac > 6)
    {
-      printf("Error: wrong number of arguments\n");
+      ft_putstr_fd("Error: wrong number of arguments\n", 2);
       return (1);
    }
    i = 1;
@@ -30,7 +44,7 @@ int ft_check_args(int ac, char **av)
       {
          if (av[i][j] < '0' || av[i][j] > '9')
          {
-            printf("Error: wrong arguments\n");
+            ft_putstr_fd("Error: wrong arguments\n", 2);
             return (1);
          }
          j++;
@@ -40,22 +54,16 @@ int ft_check_args(int ac, char **av)
    return (0);
 }
 
-int ft_parce_args(int ac, char **av, t_data *data)
+int ft_parse_args(int ac, char **av, t_data *data)
 {
    data->nb_philos = ft_atoi(av[1]);
-   printf("data->nb_philos = %d\n", data->nb_philos);
    data->time_to_die = ft_atoi(av[2]);
-   printf("data->time_to_die = %d\n", data->time_to_die);
    data->time_to_eat = ft_atoi(av[3]);
-   printf("data->time_to_eat = %d\n", data->time_to_eat);
    data->time_to_sleep = ft_atoi(av[4]);
-   printf("data->time_to_sleep = %d\n", data->time_to_sleep);
    data->nb_must_eat = -1;
    if (ac == 6)
       data->nb_must_eat = ft_atoi(av[5]);
-   printf("data->nb_must_eat = %d\n", data->nb_must_eat);
-   if (data->nb_philos < 2 || data->time_to_die < 0 || data->time_to_eat < 0
-      || data->time_to_sleep < 0 || (ac == 6 && data->nb_must_eat < 1))
+   if (data->nb_philos < 2 || data->time_to_die < 0 || data->time_to_eat < 0 || data->time_to_sleep < 0 || (ac == 6 && data->nb_must_eat < 1))
    {
       printf("Error: wrong arguments\n");
       return (1);
@@ -63,25 +71,42 @@ int ft_parce_args(int ac, char **av, t_data *data)
    return (0);
 }
 
-
 int ft_init_data(t_data *data)
 {
    data->philos = malloc(sizeof(t_philo) * data->nb_philos);
    if (data->philos == NULL)
    {
-      printf("Error: malloc failed\n");
+      ft_putstr_fd("Error: malloc failed\n", 2);
       return (1);
    }
    data->last_time_eating = malloc(sizeof(size_t) * data->nb_philos);
    if (data->last_time_eating == NULL)
    {
-      printf("Error: malloc failed\n");
+      ft_putstr_fd("Error: malloc failed\n", 2);
       return (1);
    }
    data->forks = malloc(sizeof(pthread_mutex_t) * data->nb_philos);
    if (data->forks == NULL)
    {
-      printf("Error: malloc failed\n");
+      ft_putstr_fd("Error: malloc failed\n", 2);
+      return (1);
+   }
+   for (int i = 0; i < data->nb_philos; i++)
+   {
+      if (pthread_mutex_init(&data->forks[i], NULL) != 0)
+      {
+         ft_putstr_fd("Error: mutex init failed\n", 2);
+         return (1);
+      }
+   }
+   if (pthread_mutex_init(&data->print, NULL) != 0)
+   {
+      ft_putstr_fd("Error: mutex init failed\n", 2);
+      return (1);
+   }
+   if (pthread_mutex_init(&data->death_lock, NULL) != 0)
+   {
+      ft_putstr_fd("Error: mutex init failed\n", 2);
       return (1);
    }
    return (0);
@@ -90,6 +115,7 @@ int ft_init_data(t_data *data)
 size_t get_time(void)
 {
    struct timeval time;
+
    gettimeofday(&time, NULL);
    return ((size_t)(time.tv_sec * 1000 + time.tv_usec / 1000));
 }
@@ -99,7 +125,7 @@ int ft_print(t_philo *philo, char *str)
    size_t time;
 
    pthread_mutex_lock(&philo->data->print);
-   time = philo->data->currnt_time - philo->data->start_time;
+   time = get_time() - philo->data->start_time;
    printf("%zu %d %s\n", time, philo->id, str);
    pthread_mutex_unlock(&philo->data->print);
    return (0);
@@ -107,20 +133,44 @@ int ft_print(t_philo *philo, char *str)
 
 void *ft_philo(void *data)
 {
-   size_t time;
    t_philo *philo;
+   size_t time;
 
    philo = (t_philo *)(data);
-   time = philo->data->currnt_time - philo->data->start_time;
-   if (time - philo->data->last_time_eating[philo->id - 1] > (size_t)philo->data->time_to_die)
+   while (1)
    {
-      ft_print(philo, "died");
-      philo->alive = 0;
-      return (NULL);
+      // Take forks
+      pthread_mutex_lock(&philo->data->forks[philo->id]);
+      ft_print(philo, "has taken a fork");
+      pthread_mutex_lock(&philo->data->forks[(philo->id + 1) % philo->data->nb_philos]);
+
+      // Eat
+      time = get_time();
+      pthread_mutex_lock(&philo->data->death_lock);
+      if (time - philo->data->last_time_eating[philo->id - 1] > (size_t)philo->data->time_to_die)
+      {
+         ft_print(philo, "died");
+         pthread_mutex_unlock(&philo->data->death_lock);
+         pthread_mutex_unlock(&philo->data->forks[philo->id]);
+         pthread_mutex_unlock(&philo->data->forks[(philo->id + 1) % philo->data->nb_philos]);
+         return (NULL);
+      }
+      philo->data->last_time_eating[philo->id - 1] = time;
+      pthread_mutex_unlock(&philo->data->death_lock);
+      ft_print(philo, "is eating");
+      usleep(philo->data->time_to_eat * 1000);
+
+      // Drop forks
+      pthread_mutex_unlock(&philo->data->forks[philo->id]);
+      pthread_mutex_unlock(&philo->data->forks[(philo->id + 1) % philo->data->nb_philos]);
+
+      // Sleep
+      ft_print(philo, "is sleeping");
+      usleep(philo->data->time_to_sleep * 1000);
+
+      // Think
+      ft_print(philo, "is thinking");
    }
-   ft_print(philo, "is eating");
-   ft_print(philo, "is sleeping");
-   ft_print(philo, "is thinking");
    return (NULL);
 }
 
@@ -149,6 +199,7 @@ int ft_init_philos(t_data *data)
       }
       i++;
    }
+   // monitor
    i = 0;
    while (i < data->nb_philos)
    {
@@ -161,23 +212,3 @@ int ft_init_philos(t_data *data)
    }
    return (0);
 }
-
-int main(int ac, char **av)
-{
-   t_data	*data;
-
-   data = NULL;
-   if(ft_check_args(ac, av) == 1)
-      return (1);
-   data = malloc(sizeof(t_data));
-   if(ft_parce_args(ac, av, data) == 1)
-      return (1);
-   if (ft_init_data(data) == 1)
-      return (1);
-   if(ft_init_philos(data) == 1)
-      return (1);
-   
-
-   return 0;
-}
-
