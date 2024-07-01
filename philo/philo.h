@@ -28,6 +28,7 @@ typedef struct s_philo
 	pthread_t check_death_thread;
 	pthread_t thread;
 	int flag;
+	int meals;
 	int id;
 	int alive;
 
@@ -64,7 +65,7 @@ int ft_init_data(t_data *data);
 int ft_parse_args(int ac, char **av, t_data *data);
 int ft_check_args(int ac, char **av);
 void	ft_putstr_fd(char *s, int fd);
-
+int ft_double_check(int ac, char **av);
 
 
 

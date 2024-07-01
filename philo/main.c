@@ -6,7 +6,7 @@
 /*   By: oumimoun <oumimoun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 08:50:39 by oumimoun          #+#    #+#             */
-/*   Updated: 2024/06/30 11:03:16 by oumimoun         ###   ########.fr       */
+/*   Updated: 2024/07/01 08:22:35 by oumimoun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,16 @@ int main(int ac, char **av)
 
    data = NULL;
    if(ft_check_args(ac, av) == 1)
+   {
+      ft_putstr_fd("Error: wrong arguments\n", 2);
       return (1);
+   }
+   // if (ft_double_check(ac, av) == 1)
+   // {
+   //    ft_putstr_fd("Error: wrong arguments\n", 2);
+   //    return (1);
+   // }
+   
    data = malloc(sizeof(t_data));
    if(ft_parse_args(ac, av, data) == 1)
       return (1);
