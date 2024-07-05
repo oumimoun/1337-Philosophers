@@ -27,6 +27,7 @@ typedef struct s_philo
 	struct s_data *data;
 	pthread_t check_death_thread;
 	pthread_t thread;
+	size_t last_time_eating;
 	int flag;
 	int meals;
 	int id;
@@ -38,10 +39,9 @@ typedef struct s_data
 {
 	pthread_mutex_t print;
 	pthread_mutex_t data_race;
+	pthread_mutex_t death_lock;;
 	pthread_mutex_t *forks;
-	pthread_mutex_t death_lock;
 	size_t currnt_time;
-	size_t *last_time_eating;
 	int nb_philos;
 	int time_to_eat;
 	int time_to_die;
@@ -67,7 +67,7 @@ int ft_check_args(int ac, char **av);
 void	ft_putstr_fd(char *s, int fd);
 int ft_double_check(int ac, char **av);
 
-
+int destroy_mutexes(t_data *data);
 
 
 
