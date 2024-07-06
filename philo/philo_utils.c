@@ -14,39 +14,47 @@
 
 int	ft_atoi(char *str)
 {
-	int i;
-	int signe;
-	int total;
+	int		i;
+	int		signe;
+	long	total;
 
-	i = 0;
 	signe = 1;
 	total = 0;
-	while (str[i] == ' ' || str[i] == '\t')
+	i = 0;
+	while (str[i] == ' ')
 		i++;
 	if (str[i] == '+' || str[i] == '-')
 	{
 		if (str[i] == '-')
-		{
-			signe *= -1;
-		}
-		i++;
+			signe *= (-1);
+		if (str[++i] == '+' || str[i] == '-' || str[i] == '\0')
+			return (-1);
 	}
-	while (str[i] >= '0' && str[i] <= '9') 
+	while (str[i] >= '0' && str[i] <= '9')
 	{
-		total = total * 10 + (str[i] - '0');
-		i++;
+		total = total * 10 + str[i] - '0';
+		if (str[++i] == '+' || str[i] == '-')
+			return (-1);
 	}
-	return (total * signe);
+	if ((total * signe) < INT_MIN || (total * signe) > INT_MAX)
+		return (-1);
+	return ((int)(signe * total));
 }
 
-int ft_usleep(size_t milliseconds, t_philo *philo)
+void	ft_usleep(size_t time)
 {
-   size_t start;
+	size_t			d_time;
+	struct timeval	tp;
 
-   start = get_time();
-   while ((get_time() - start) < milliseconds && ft_check_flags(philo))
-      usleep(500);
-   return (0);
+	gettimeofday(&tp, NULL);
+	d_time = (size_t)(tp.tv_sec * 1000) + (size_t)(tp.tv_usec / 1000);
+	usleep((time - 20) * 1000);
+	time += d_time;
+	while (d_time < time)
+	{
+		gettimeofday(&tp, NULL);
+		d_time = (size_t)(tp.tv_sec * 1000) + (size_t)(tp.tv_usec / 1000);
+	}
 }
 
 size_t get_time(void)

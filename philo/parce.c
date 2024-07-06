@@ -6,7 +6,7 @@
 /*   By: oumimoun <oumimoun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 09:11:42 by oumimoun          #+#    #+#             */
-/*   Updated: 2024/07/06 09:16:57 by oumimoun         ###   ########.fr       */
+/*   Updated: 2024/07/06 14:14:04 by oumimoun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,10 +49,7 @@ int ft_check_args(int ac, char **av)
    int j;
 
    if (ac < 5 || ac > 6)
-   {
-      ft_putstr_fd("Error: wrong number of arguments\n", 2);
       return (1);
-   }
    i = 1;
    while (i < ac)
    {

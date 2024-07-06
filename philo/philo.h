@@ -77,13 +77,14 @@ int destroy_mutexes(t_data *data);
 void ft_join_threads(t_data *data);
 int destroy_mutexes(t_data *data);
 
-int ft_usleep(size_t milliseconds, t_philo *philo);
+void ft_usleep(size_t milliseconds);
+
 int ft_print(t_philo *philo, char *str);
 void ft_putstr_fd(char *s, int fd);
 
 size_t get_time(void);
 int ft_parse_args(int ac, char **av, t_data *data);
-int ft_check_args(int ac, char **av);
+
 int ft_double_check(int ac, char **av);
 int ft_isdigit(int d);
 
