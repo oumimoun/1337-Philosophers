@@ -6,30 +6,38 @@
 /*   By: oumimoun <oumimoun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 08:50:39 by oumimoun          #+#    #+#             */
-/*   Updated: 2024/07/06 11:38:39 by oumimoun         ###   ########.fr       */
+/*   Updated: 2024/07/07 15:19:48 by oumimoun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int main(int ac, char **av)
+void	ft_free(t_data *data)
 {
-   t_data	*data;
+	free(data->philos);
+	data->philos = NULL;
+	free(data->forks);
+	data->forks = NULL;
+	free(data);
+	data = NULL;
+}
 
-   data = NULL;
-   if(ft_check_args(ac, av) == 1)
-   {
-      ft_putstr_fd("Error: wrong arguments\n", 2);
-      return (1);
-   }
-   data = malloc(sizeof(t_data));
-   if(ft_parse_args(ac, av, data) == 1)
-      return (1);
-   if (ft_init_data(data) == 1)
-      return (1);
-   if(ft_init_philos(data) == 1)
-      return (1);
-   if (destroy_mutexes(data) == 1)
-      return (1);
-   return 0;
+int	main(int ac, char **av)
+{
+	t_data	*data;
+
+	data = malloc(sizeof(t_data));
+	if (ft_parse_args(ac, av, data) == ERROR)
+	{
+		ft_putstr_fd("Error: wrong arguments\n", 2);
+		return ((free(data)), (data = NULL), (ERROR));
+	}
+	if (ft_init_data(data) == 1)
+		return ((free(data)), (data = NULL), (ERROR));
+	if (ft_init_philos(data) == ERROR)
+		return ((ft_free(data)), (ERROR));
+	if (destroy_mutexes(data) == ERROR)
+		return ((ft_free(data)), (ERROR));
+	ft_free(data);
+	return (SUCCESS);
 }

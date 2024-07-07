@@ -1,12 +1,14 @@
 HEADER = philo.h
 CC = cc
-CFLAGS = -Wall -Werror -Wextra -g #-fsanitize=thread
+CFLAGS = -Wall -Werror -Wextra
 NAME = philo
 SRC = philo.c\
 	philo_utils.c\
 	main.c\
 	parce.c\
 	threads.c\
+	routine.c\
+	monitor.c\
 
 OBJ = $(SRC:.c=.o)
 
