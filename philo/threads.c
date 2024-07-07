@@ -6,7 +6,7 @@
 /*   By: oumimoun <oumimoun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 09:07:04 by oumimoun          #+#    #+#             */
-/*   Updated: 2024/07/06 09:15:49 by oumimoun         ###   ########.fr       */
+/*   Updated: 2024/07/07 09:56:45 by oumimoun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void ft_join_threads(t_data *data)
     {
         if (pthread_join(data->philos[i].thread, NULL) != 0)
         {
-            printf("Error: thread join failed\n");
+            ft_putstr_fd("Error: thread join failed\n", 2);
             return;
         }
         i++;

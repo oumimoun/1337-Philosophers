@@ -12,11 +12,11 @@
 
 #include "philo.h"
 
-int	ft_atoi(char *str)
+int ft_atoi(char *str)
 {
-	int		i;
-	int		signe;
-	long	total;
+	int i;
+	int signe;
+	long total;
 
 	signe = 1;
 	total = 0;
@@ -41,55 +41,52 @@ int	ft_atoi(char *str)
 	return ((int)(signe * total));
 }
 
-void	ft_usleep(size_t time)
+void ft_usleep(size_t milliseconds , t_philo *philo)
 {
-	size_t			d_time;
-	struct timeval	tp;
+	size_t start;
 
-	gettimeofday(&tp, NULL);
-	d_time = (size_t)(tp.tv_sec * 1000) + (size_t)(tp.tv_usec / 1000);
-	usleep((time - 20) * 1000);
-	time += d_time;
-	while (d_time < time)
+	start = get_time();
+	while ((get_time() - start) < milliseconds)
 	{
-		gettimeofday(&tp, NULL);
-		d_time = (size_t)(tp.tv_sec * 1000) + (size_t)(tp.tv_usec / 1000);
+		if (ft_check_flags(philo) == 0)
+			return ;
+		usleep(500);
 	}
 }
 
 size_t get_time(void)
 {
-   struct timeval time;
+	struct timeval time;
 
-   if (gettimeofday(&time, NULL) == -1)
-      ft_putstr_fd("gettimeofday() error\n", 2);
-   return ((size_t)(time.tv_sec * 1000 + time.tv_usec / 1000));
+	if (gettimeofday(&time, NULL) == -1)
+		ft_putstr_fd("gettimeofday() error\n", 2);
+	return ((size_t)(time.tv_sec * 1000 + time.tv_usec / 1000));
 }
 
 int ft_print(t_philo *philo, char *str)
 {
-   size_t time;
+	size_t time;
 
-   if (ft_check_flags(philo))
-   {
-      pthread_mutex_lock(&philo->data->print);
-      time = get_time() - philo->data->start_time;
-      printf("%zu %d %s\n", time, philo->id, str);
-      pthread_mutex_unlock(&philo->data->print);
-   }
-   return (0);
+	if (ft_check_flags(philo))
+	{
+		pthread_mutex_lock(&philo->data->print);
+		time = get_time() - philo->data->start_time;
+		printf("%zu %d %s\n", time, philo->id, str);
+		pthread_mutex_unlock(&philo->data->print);
+	}
+	return (0);
 }
 
 void ft_putstr_fd(char *s, int fd)
 {
-   int i;
+	int i;
 
-   if (!s || fd < 0)
-      return;
-   i = 0;
-   while (s[i])
-   {
-      write(fd, &s[i], 1);
-      i++;
-   }
+	if (!s || fd < 0)
+		return;
+	i = 0;
+	while (s[i])
+	{
+		write(fd, &s[i], 1);
+		i++;
+	}
 }

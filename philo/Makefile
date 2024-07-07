@@ -1,6 +1,6 @@
 HEADER = philo.h
 CC = cc
-CFLAGS = -Wall -Werror -Wextra -g -fsanitize=thread
+CFLAGS = -Wall -Werror -Wextra -g #-fsanitize=thread
 NAME = philo
 SRC = philo.c\
 	philo_utils.c\

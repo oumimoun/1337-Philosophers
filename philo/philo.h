@@ -30,10 +30,8 @@ typedef struct s_philo
 	pthread_mutex_t *left_fork;
 	pthread_t thread;
 	size_t last_time_eating;
-	int flag;
 	int meals;
 	int id;
-	int alive;
 
 } t_philo;
 
@@ -47,9 +45,9 @@ typedef struct s_data
 	pthread_mutex_t *forks;
 	size_t currnt_time;
 	int nb_philos;
-	int time_to_eat;
+	size_t time_to_eat;
 	size_t time_to_die;
-	int time_to_sleep;
+	size_t time_to_sleep;
 	int die;
 	int full;
 	int nb_must_eat;
@@ -77,7 +75,7 @@ int destroy_mutexes(t_data *data);
 void ft_join_threads(t_data *data);
 int destroy_mutexes(t_data *data);
 
-void ft_usleep(size_t milliseconds);
+void ft_usleep(size_t milliseconds, t_philo *philo);
 
 int ft_print(t_philo *philo, char *str);
 void ft_putstr_fd(char *s, int fd);
@@ -89,6 +87,8 @@ int ft_double_check(int ac, char **av);
 int ft_isdigit(int d);
 
 int ft_check_flags(t_philo *philo);
+
+
 
 
 

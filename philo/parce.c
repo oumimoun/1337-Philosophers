@@ -6,7 +6,7 @@
 /*   By: oumimoun <oumimoun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 09:11:42 by oumimoun          #+#    #+#             */
-/*   Updated: 2024/07/06 14:14:04 by oumimoun         ###   ########.fr       */
+/*   Updated: 2024/07/07 09:56:34 by oumimoun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ int ft_parse_args(int ac, char **av, t_data *data)
       data->nb_must_eat = ft_atoi(av[5]);
    if (data->nb_philos < 1 || data->time_to_die < 0 || data->time_to_eat < 0 || data->time_to_sleep < 0 || (ac == 6 && data->nb_must_eat < 1))
    {
-      printf("Error: wrong arguments\n");
+      ft_putstr_fd("Error: wrong arguments\n", 2);
       return (1);
    }
    return (0);

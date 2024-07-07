@@ -96,19 +96,15 @@ void *ft_philo(void *philo1)
    t_philo *philo;
 
    philo = (t_philo *)(philo1);
-   if (philo->id % 2 == 1)
-      ft_usleep(philo->data->time_to_eat);
+   if (philo->id % 2 == 0)
+      ft_usleep(philo->data->time_to_eat, philo);
    while (ft_check_flags(philo))
    {
       if (philo->data->nb_philos == 1)
       {
          pthread_mutex_lock(philo->right_fork);
          ft_print(philo, "has taken a fork");
-         ft_usleep(philo->data->time_to_die);
-         ft_print(philo, "died");
-         pthread_mutex_lock(&philo->data->death_lock);
-         philo->data->die = 1;
-         pthread_mutex_unlock(&philo->data->death_lock);
+         pthread_mutex_unlock(philo->right_fork);
          return (NULL);
       }
       pthread_mutex_lock(philo->right_fork);
@@ -116,7 +112,7 @@ void *ft_philo(void *philo1)
       pthread_mutex_lock(philo->left_fork);
       ft_print(philo, "has taken a fork");
       ft_print(philo, "is eating");
-      ft_usleep(philo->data->time_to_eat);
+      ft_usleep(philo->data->time_to_eat, philo);
 
       pthread_mutex_lock(&philo->data->data_race);
       philo->last_time_eating = get_time();
@@ -130,7 +126,7 @@ void *ft_philo(void *philo1)
       pthread_mutex_unlock(philo->left_fork);
 
       ft_print(philo, "is sleeping");
-      ft_usleep(philo->data->time_to_sleep);
+      ft_usleep(philo->data->time_to_sleep, philo);
 
       ft_print(philo, "is thinking");
    }
@@ -168,7 +164,6 @@ int ft_check_death(t_philo *philo)
    return (1);
 }
 
-
 int ft_check_full(t_philo *philo)
 {
    int i = 0;
@@ -193,16 +188,18 @@ int ft_check_full(t_philo *philo)
    return (1);
 }
 
+
+
 void *ft_monitor(void *philo1)
 {
    t_philo *philo = (t_philo *)philo1;
    while (1)
    {
       if (ft_check_death(philo) == 0)
-         break;
+         return (NULL);
       if (ft_check_full(philo) == 0)
-         break;
-      ft_usleep(5);
+         return (NULL);
+      // ft_usleep(5);
    }
    return (NULL);
 }
@@ -218,8 +215,6 @@ int ft_init_philos(t_data *data)
    {
       data->philos[i].id = i + 1;
       data->philos[i].data = data;
-      data->philos[i].flag = 0;
-      data->philos[i].alive = 1;
       data->philos[i].meals = 0;
       data->philos[i].last_time_eating = get_time();
       data->philos[i].right_fork = &(data->forks[i]);
@@ -229,7 +224,7 @@ int ft_init_philos(t_data *data)
          data->philos[i].left_fork = &(data->forks[i - 1]);
       if (pthread_create(&data->philos[i].thread, NULL, ft_philo, &data->philos[i]) != 0)
       {
-         printf("Error: thread creation failed\n");
+         ft_putstr_fd("Error: thread creation failed\n", 2);
          return (1);
       }
       i++;
@@ -237,7 +232,7 @@ int ft_init_philos(t_data *data)
    pthread_create(&monitor, NULL, ft_monitor, data->philos);
    if (pthread_join(monitor, NULL) != 0)
    {
-      printf("Error: thread join failed\n");
+      ft_putstr_fd("Error: thread join failed\n", 2);
       return (1);
    }
    ft_join_threads(data);
