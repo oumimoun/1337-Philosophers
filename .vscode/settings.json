@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "ios": "c",
-        "sstream": "c",
-        "_select.h": "c",
-        "philo.h": "c"
-    }
-}

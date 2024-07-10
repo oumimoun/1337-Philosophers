@@ -21,7 +21,7 @@ The dining philosophers problem is a classic computer science problem used to il
 
 Clone the repository and navigate to the project directory:
 
-```sh
+```bash
 git clone git@github.com:oumimoun/1337-Philosophers.git
 cd 1337-Philosophers
 cd philo
@@ -29,7 +29,7 @@ cd philo
 
 Compile the program:
 
-```sh
+```bash
 make
 ```
 
@@ -37,7 +37,7 @@ make
 
 Run the compiled program:
 
-```sh
+```bash
 ./philo 2 800 200 300 10
 ```
 

@@ -6,7 +6,7 @@
 /*   By: oumimoun <oumimoun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 08:50:39 by oumimoun          #+#    #+#             */
-/*   Updated: 2024/07/09 10:06:18 by oumimoun         ###   ########.fr       */
+/*   Updated: 2024/07/10 17:26:32 by oumimoun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	main(int ac, char **av)
 		ft_putstr_fd("Error: wrong arguments\n", 2);
 		return ((free(data)), (data = NULL), (ERROR));
 	}
-	if (ft_init_data(data) == 1)
+	if (ft_init_data(data) == ERROR)
 		return ((free(data)), (data = NULL), (ERROR));
 	if (ft_init_philos(data) == ERROR)
 		return ((ft_free(data)), (ERROR));
